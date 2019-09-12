@@ -1,6 +1,5 @@
-const { gql } = require('apollo-server-express');
-
-const typeDefs = gql`
+const { buildSchema } = require('graphql');
+const Schema = buildSchema(`
 	scalar Number
 	scalar Date
 	type Book {
@@ -46,6 +45,6 @@ const typeDefs = gql`
 		createBook(input: BookInput): Book!
 		createAudioVideo(input: AudioVideoInput): AudioVideo!
 	}
-`;
+`);
 
-module.exports = typeDefs;
+module.exports = Schema;

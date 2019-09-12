@@ -1,20 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const graphqlHttp = require('express-graphql');
 const cors = require('cors');
 
-const typeDefs = require('./graphql/schema');
-const resolvers = require('./graphql/resolver');
+const Schema = require('./graphql/schema');
+const Resolvers = require('./graphql/resolver');
 
 const connectDb = require('./config/db');
-
-//Connecting to DataBase
-connectDb();
-
-const { ApolloServer } = require('apollo-server-express');
-
-const server = new ApolloServer({ typeDefs, resolvers });
 const app = express();
-server.applyMiddleware({ app });
 
 //Using BodyParser as Middleware
 app.use(bodyParser.json());
@@ -22,6 +15,21 @@ app.use(bodyParser.json());
 //Allowing Cross Origin Routing between Client and Server
 app.use(cors());
 
-app.listen({ port: 4000 }, () =>
-	console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+//Connecting to DataBase
+connectDb();
+
+//API EndPoint
+app.use(
+	'/api',
+	graphqlHttp({
+		schema: Schema,
+		rootValue: Resolvers,
+		graphiql: true
+	})
 );
+
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+	console.log(`Server started on ${PORT}`);
+});
