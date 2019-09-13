@@ -1,5 +1,6 @@
 const Book = require('../models/Book');
 const AudioVideo = require('../models/AudioVideo');
+const Magazine = require('../models/Magazine');
 
 // Provide resolver functions for your schema fields
 const resolvers = {
@@ -45,6 +46,28 @@ const resolvers = {
 			console.error(error.msg);
 		}
 	},
+	getMagazine: async ({ id }) => {
+		try {
+			if (id) {
+				return await Magazine.findById(id);
+			}
+		} catch (error) {
+			console.error(error.msg);
+		}
+	},
+	getMagazines: async ({ input }) => {
+		try {
+			if (input) {
+				return await Magazine.find().filter(magazine =>
+					input.includes(magazine.id)
+				);
+			} else {
+				return await Magazine.find();
+			}
+		} catch (error) {
+			console.error(error.msg);
+		}
+	},
 	createBook: async ({ input }) => {
 		try {
 			const book = new Book(input);
@@ -59,6 +82,15 @@ const resolvers = {
 			const av = new AudioVideo(input);
 			await av.save();
 			return av;
+		} catch (error) {
+			console.error(error.msg);
+		}
+	},
+	createMagazine: async ({ input }) => {
+		try {
+			const magazine = new Magazine(input);
+			await magazine.save();
+			return magazine;
 		} catch (error) {
 			console.error(error.msg);
 		}
